@@ -10,7 +10,6 @@ Does it work? Mostly!
 
 ## TODO
 
-- [ ] Make folder selection work, as well as validate if the folder exists
-- [ ] Allow user-configurable presets for folder locations
-- [ ] Allow user to specify audio codec
+- [X] Make folder selection work, as well as validate if the folder exists
+- [X] Allow user to specify audio codec
 - [ ] Automatically number downloads

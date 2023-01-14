@@ -3,8 +3,10 @@ import os
 try:
     from tkinter import *
     from tkinter import ttk
+    from tkinter import filedialog
 except ImportError:
     from Tkinter import *
+    from Tkinter import filedialog
     import ttk
 
 class App:
@@ -15,85 +17,110 @@ class App:
         # Window title
         self.root.title('StudyChill Fetcher')
 
-        # Configure root and mainframe Frame
+        # Variables
+        self.folder_path = StringVar()
+        self.codec = StringVar()
+        self.status_message = StringVar()
+
+        self.ENTRY_BOX_ROW = 1
+        self.CONFIG_ROW = self.ENTRY_BOX_ROW + 5
+        self.PBAR_ROW = self.CONFIG_ROW + 4
+
+        # Init everything else
+        self.init_frames()
+        self.init_entry()
+        self.init_config()
+        self.init_status_area()
+        self.bind_events()
+
+
+    def init_frames(self):
+        '''Configure root and mainframe Frame'''
         self.mainframe = ttk.Frame(self.root, padding="3 3 12 12")
         self.mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-        # Variables
-        self.mode = StringVar()
-        self.folder_path = StringVar()
-
-        # Init everything else
-        self.init_entry_frame()
-        self.init_progress_bar_frame()
-        self.init_right_column_frame()
-        self.bind_events()
-
-    def init_entry_frame(self):
+    def init_entry(self):
         '''Entry box configuration'''
-        # Frame
-        self.entry_frame = ttk.Frame(self.mainframe)
-        self.entry_frame.grid(column=0, row=0)
-
         # Text entry box
-        self.entry_box = Text(self.entry_frame, width=40, height=10)
-        self.entry_box.grid(column=1, row=1, columnspan=5, rowspan=3, padx=5, pady=5, sticky=(N,S,W,E))
-        self.entry_box['wrap'] = 'char'
-        self.entry_box.insert('1.0', 'Enter video URLs')
+        self.entry_box = Text(self.mainframe, width=70, height=10)
+        self.entry_box.grid(column=1, row=self.ENTRY_BOX_ROW, columnspan=5, rowspan=3, padx=5, pady=5, sticky=(N,S,W,E))
+        self.entry_box['wrap'] = 'none'
+        self.entry_box.insert('1.0', 'Enter video URLs seperated by lines')
 
-        # Scrollbar
-        ys = ttk.Scrollbar(self.entry_frame, orient=VERTICAL, command=self.entry_box.yview)
-        self.entry_box['yscrollcommand'] = ys.set
 
-    def init_progress_bar_frame(self):
-        '''Configure progress bar'''
-        self.root.update()
-        wd = self.root.winfo_width()
-        self.progress_bar_frame = ttk.Frame(self.mainframe)
-        self.progress_bar_frame.grid(column=0, row=1)
-        self.pbar = ttk.Progressbar(self.progress_bar_frame, orient=HORIZONTAL, length=wd, mode='determinate')
-        self.pbar.grid(column=1, row=1)
-
-    def init_right_column_frame(self):
-        '''Right column configuration'''
-        # Frame
-        self.right_column = ttk.Frame(self.root, padding="3 12 12 0")
-        self.right_column.grid(column=1, row=0, sticky=(N,W,E))
-
-        # Misc right column
-        ttk.Button(self.right_column, text='Go!', command=self.start_fetch).grid(column=1, row=5, sticky=(W,E), padx=5, pady=5)
-        ttk.Label(self.right_column, text='Folder select').grid(column=1, row=1, sticky=(W,S,N), pady=5)
+    def init_config(self):
+        '''Config area init'''
+        # Area seperator
+        ttk.Separator(self.mainframe, orient=HORIZONTAL).grid(column=1, row=self.CONFIG_ROW - 1, columnspan=5, sticky=(N,S,W,E), pady=5)        
         
-        # Right column folder select entry box
-        self.folder_entry = ttk.Entry(self.right_column, textvariable=self.folder_path, text='hi'); self.folder_entry.grid(column=1, row=4)
-        self.folder_entry.insert(0, './'); self.folder_path.set('./')
+        # Browse button
+        self.browse_button = ttk.Button(self.mainframe, text='Browse', command=self.grab_folder_path)
+        self.browse_button.grid(column=1, row=self.CONFIG_ROW, pady=10, padx=5, sticky=(W,E))
+
+        # Folder select entry box
+        self.folder_entry = ttk.Entry(self.mainframe, textvariable=self.folder_path)
+        self.folder_entry.grid(column=2, row=self.CONFIG_ROW, sticky=(E,W), columnspan=4, padx=5, pady=5)
+        self.folder_path.set('No Folder Selected')
         self.folder_entry.state(['disabled'])
 
-        # Right column radio buttons
-        rb1 = ttk.Radiobutton(self.right_column, text='Individual', variable=self.mode, value='individual',
-            command=lambda: self.configure_mode(self.folder_entry))
-        rb2 = ttk.Radiobutton(self.right_column, text='Folder', variable=self.mode, value='folder',
-            command=lambda: self.configure_mode(self.folder_entry))
-        rb1.grid(column=1, row=2, sticky=W)
-        rb2.grid(column=1, row=3, sticky=W)
-        rb1.invoke()
+        # Codec selection box
+        ttk.Label(self.mainframe, text='Select audio codec:').grid(column=1, row=self.CONFIG_ROW + 1, sticky=(N,S), padx=5, pady=5)
+
+        self.codec_select_box = ttk.Combobox(self.mainframe, textvariable=self.codec)
+        self.codec_select_box.grid(column=2, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
+        self.codec_select_box['values'] = ('m4a', 'mp3')
+        self.codec.set('m4a')
+        self.codec_select_box.state(["readonly"])
+
+
+    def init_status_area(self):
+        '''Configure progress bar, go button, and status message'''
+        # Go button
+        self.go_button = ttk.Button(self.mainframe, text='Go!', command=self.start_fetch)
+        self.go_button.grid(column=2, row=self.PBAR_ROW - 2, sticky=(N,S,E), padx=5, pady=10, columnspan=5)
+
+        # Status message
+        status_label = ttk.Label(self.mainframe, textvariable=self.status_message)
+        status_label.grid(column=1, row=self.PBAR_ROW - 2, columnspan=4, sticky=(N,S,W), padx=5, pady=10)
+        self.status_message.set('')
+
+        # Seperator
+        ttk.Separator(self.mainframe, orient=HORIZONTAL).grid(column=1, row=self.PBAR_ROW - 1, columnspan=5, sticky=(N,S,W,E), pady=5)
+
+        # Progress bar
+        self.root.update()
+        window_width = self.root.winfo_width()
+        self.pbar = ttk.Progressbar(self.mainframe, orient=HORIZONTAL, length=window_width, mode='determinate')
+        self.pbar.grid(column=1, row=self.PBAR_ROW, columnspan=5, padx=5)
+
 
     def bind_events(self):
         '''Event registration'''
         self.entry_box.focus()
         self.entry_box.tag_add('sel', '1.0', 'end')
         self.root.bind('<Escape>', lambda e: quit())
-        self.folder_entry.bind('<FocusOut>', self.configure_mode)
+        self.codec_select_box.bind('<<ComboboxSelected>>', lambda e: self.mainframe.focus())
         
+
     def start_fetch(self, *args):
         '''Grab URLs and send them to the fetcher'''
+
+        # Make sure a folder is selected
+        if self.folder_path.get() == 'No Folder Selected':
+            self.grab_folder_path()
+
+        # Prep GUI for downloading
         self.entry_box['state'] = 'disabled'
         self.pbar['value'] = 0
+        self.status_message.set('Fetcher is working, even if the window is not responding...')
+
+        # Grab songs and folder path
         songs = self.entry_box.get('1.0', 'end').split('\n')
         path = self.folder_path.get()
 
+        # Do the thing
         self.pbar['maximum'] = float(len(songs))
         self.pbar['value'] += 1
         for song in songs:
@@ -102,12 +129,17 @@ class App:
             self.root.after(200, fetch(path, song, 'mp3'))
             self.pbar['value'] += 1
 
+        # Set GUI back to normal state
         self.entry_box['state'] = 'normal'
+        self.pbar['value'] = 0
+        self.status_message.set('Done!')
+
+    
+    def grab_folder_path(self, *args):
+        filename = filedialog.askdirectory()
+        if filename != '':
+            self.folder_path.set(filename)
 
 
-    def configure_mode(self, *args):
-        '''Called when radio buttons are clicked on and when folder location is updated.'''
-        if self.mode.get() == 'folder':
-            self.folder_entry.state(['!disabled'])
-        else:
-            self.folder_entry.state(['disabled'])
+if __name__ == '__main__':
+    input('You should run "main.py" instead!')
