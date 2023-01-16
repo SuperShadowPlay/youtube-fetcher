@@ -24,7 +24,7 @@ class App:
 
         self.ENTRY_BOX_ROW = 1
         self.CONFIG_ROW = self.ENTRY_BOX_ROW + 5
-        self.PBAR_ROW = self.CONFIG_ROW + 4
+        self.PBAR_ROW = self.CONFIG_ROW + 1
 
         # Init everything else
         self.init_frames()
@@ -35,9 +35,9 @@ class App:
 
 
     def init_frames(self):
-        '''Configure root and mainframe Frame'''
+        '''Configure root and mainframe'''
         self.mainframe = ttk.Frame(self.root, padding="3 3 12 12")
-        self.mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+        self.mainframe.grid(column=0, row=0, sticky=(N,W,E,S))
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
@@ -55,20 +55,25 @@ class App:
         # Area seperator
         ttk.Separator(self.mainframe, orient=HORIZONTAL).grid(column=1, row=self.CONFIG_ROW - 1, columnspan=5, sticky=(N,S,W,E), pady=5)        
         
+        # Init frame that contains config stuff
+        self.config_frame = ttk.Frame(self.mainframe)
+        self.config_frame.grid(column=1, row=self.CONFIG_ROW, sticky=(N,W,E,S), columnspan=5)
+        self.config_frame.grid_columnconfigure(2,weight=1) # Allow 2nd column to spread to the rest of the window
+
         # Browse button
-        self.browse_button = ttk.Button(self.mainframe, text='Browse', command=self.grab_folder_path)
+        self.browse_button = ttk.Button(self.config_frame, text='Browse', command=self.grab_folder_path)
         self.browse_button.grid(column=1, row=self.CONFIG_ROW, pady=10, padx=5, sticky=(W,E))
 
         # Folder select entry box
-        self.folder_entry = ttk.Entry(self.mainframe, textvariable=self.folder_path)
+        self.folder_entry = ttk.Entry(self.config_frame, textvariable=self.folder_path)
         self.folder_entry.grid(column=2, row=self.CONFIG_ROW, sticky=(E,W), columnspan=4, padx=5, pady=5)
         self.folder_path.set('No Folder Selected')
         self.folder_entry.state(['disabled'])
 
         # Codec selection box
-        ttk.Label(self.mainframe, text='Select audio codec:').grid(column=1, row=self.CONFIG_ROW + 1, sticky=(N,S), padx=5, pady=5)
+        ttk.Label(self.config_frame, text='Select audio codec:').grid(column=1, row=self.CONFIG_ROW + 1, sticky=(N,S), padx=5, pady=5)
 
-        self.codec_select_box = ttk.Combobox(self.mainframe, textvariable=self.codec)
+        self.codec_select_box = ttk.Combobox(self.config_frame, textvariable=self.codec)
         self.codec_select_box.grid(column=2, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
         self.codec_select_box['values'] = ('m4a', 'mp3')
         self.codec.set('m4a')
@@ -79,21 +84,21 @@ class App:
         '''Configure progress bar, go button, and status message'''
         # Go button
         self.go_button = ttk.Button(self.mainframe, text='Go!', command=self.start_fetch)
-        self.go_button.grid(column=2, row=self.PBAR_ROW - 2, sticky=(N,S,E), padx=5, pady=10, columnspan=5)
+        self.go_button.grid(column=2, row=self.PBAR_ROW, sticky=(N,S,E), padx=5, pady=10, columnspan=5)
 
         # Status message
         status_label = ttk.Label(self.mainframe, textvariable=self.status_message)
-        status_label.grid(column=1, row=self.PBAR_ROW - 2, columnspan=4, sticky=(N,S,W), padx=5, pady=10)
+        status_label.grid(column=1, row=self.PBAR_ROW, columnspan=4, sticky=(N,S,W), padx=5, pady=10)
         self.status_message.set('')
 
         # Seperator
-        ttk.Separator(self.mainframe, orient=HORIZONTAL).grid(column=1, row=self.PBAR_ROW - 1, columnspan=5, sticky=(N,S,W,E), pady=5)
+        ttk.Separator(self.mainframe, orient=HORIZONTAL).grid(column=1, row=self.PBAR_ROW + 1, columnspan=5, sticky=(N,S,W,E), pady=5)
 
         # Progress bar
         self.root.update()
         window_width = self.root.winfo_width()
         self.pbar = ttk.Progressbar(self.mainframe, orient=HORIZONTAL, length=window_width, mode='determinate')
-        self.pbar.grid(column=1, row=self.PBAR_ROW, columnspan=5, padx=5)
+        self.pbar.grid(column=1, row=self.PBAR_ROW + 2, columnspan=5, padx=5)
 
 
     def bind_events(self):

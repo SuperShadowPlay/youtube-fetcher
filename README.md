@@ -19,6 +19,7 @@ Or if your operating system allows, just open `main.py` from your file browser.
 - [x] Make folder selection work
 - [x] Allow user to specify audio codec
 - [ ] Ask user to install `yt-dlp` if not found
+- [ ] Properly integrate `yt-dlp`
 - [ ] Automatically number downloads
 - [ ] Allow video and thumbnail downloads
 - [ ] More intuitive way to enter URLs
