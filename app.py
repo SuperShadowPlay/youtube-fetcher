@@ -15,12 +15,13 @@ class App:
         self.root = main_root
 
         # Window title
-        self.root.title('StudyChill Fetcher')
+        self.root.title('YouTube Fetcher')
 
         # Variables
         self.folder_path = StringVar()
         self.codec = StringVar()
         self.status_message = StringVar()
+        self.extra_options = StringVar()
 
         self.ENTRY_BOX_ROW = 1
         self.CONFIG_ROW = self.ENTRY_BOX_ROW + 5
@@ -72,12 +73,17 @@ class App:
 
         # Codec selection box
         ttk.Label(self.config_frame, text='Select audio codec:').grid(column=1, row=self.CONFIG_ROW + 1, sticky=(N,S), padx=5, pady=5)
-
         self.codec_select_box = ttk.Combobox(self.config_frame, textvariable=self.codec)
         self.codec_select_box.grid(column=2, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
-        self.codec_select_box['values'] = ('m4a', 'mp3')
+        self.codec_select_box['values'] = ('best', 'aac', 'flac', 'mp3', 'm4a', 'opus', 'vorbis', 'wav')
         self.codec.set('m4a')
         self.codec_select_box.state(["readonly"])
+
+        # Keep video box
+        self.keep_video_box = ttk.Checkbutton(self.config_frame, text='Keep Video', variable=self.extra_options,
+	    onvalue='-k', offvalue='')
+        self.keep_video_box.grid(column=3, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
+        self.extra_options.set('')
 
 
     def init_status_area(self):
@@ -129,9 +135,8 @@ class App:
         self.pbar['maximum'] = float(len(songs))
         self.pbar['value'] += 1
         for song in songs:
-            print('Max: {}'.format(self.pbar['maximum']), 'Val: {}'.format(self.pbar['value']))
             self.root.update_idletasks()
-            self.root.after(200, fetch(path, song, 'mp3'))
+            self.root.after(200, fetch(path, song, self.codec.get(), options=self.extra_options.get())) # pass everything over to the yt-dlp file
             self.pbar['value'] += 1
 
         # Set GUI back to normal state

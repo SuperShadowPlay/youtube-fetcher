@@ -22,7 +22,9 @@ If you need to install yt-dlp and are scared of a command prompt, simply run the
 - [x] Allow user to specify audio codec
 - [ ] Ask user to install `yt-dlp` if not found
 - [ ] Properly integrate `yt-dlp`
-- [ ] Automatically number downloads
-- [ ] Allow video and thumbnail downloads
+- [ ] Option to automatically number downloads
+- [x] Allow video downloads
+- [ ] Allow thumbnail downloads
 - [ ] More intuitive way to enter URLs
 - [ ] Give the app a nice theme
+- [ ] Make config choices persistent over multiple sessions
