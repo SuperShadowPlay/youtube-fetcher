@@ -14,6 +14,8 @@ Does it work? Mostly!
 
 Or if your operating system allows, just open `main.py` from your file browser.
 
+If you need to install yt-dlp and are scared of a command prompt, simply run the `setup.py` file to install it automatically.
+
 ## Future Features
 
 - [x] Make folder selection work
