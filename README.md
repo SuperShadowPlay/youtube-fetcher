@@ -24,7 +24,8 @@ If you need to install yt-dlp and are scared of a command prompt, simply run the
 - [ ] Properly integrate `yt-dlp`
 - [ ] Option to automatically number downloads
 - [x] Allow video downloads
-- [ ] Allow thumbnail downloads
+- [ ] Allow thumbnail image downloads
 - [ ] More intuitive way to enter URLs
 - [ ] Give the app a nice theme
 - [ ] Make config choices persistent over multiple sessions
+- [ ] Parallel downloaders

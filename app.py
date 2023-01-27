@@ -22,6 +22,7 @@ class App:
         self.codec = StringVar()
         self.status_message = StringVar()
         self.extra_options = StringVar()
+        self.file_numbering = StringVar()
 
         self.ENTRY_BOX_ROW = 1
         self.CONFIG_ROW = self.ENTRY_BOX_ROW + 5
@@ -59,7 +60,7 @@ class App:
         # Init frame that contains config stuff
         self.config_frame = ttk.Frame(self.mainframe)
         self.config_frame.grid(column=1, row=self.CONFIG_ROW, sticky=(N,W,E,S), columnspan=5)
-        self.config_frame.grid_columnconfigure(2,weight=1) # Allow 2nd column to spread to the rest of the window
+        self.config_frame.grid_columnconfigure(5,weight=1) # Allow an invisible 5th column to expand and let some widgets span multiple columns
 
         # Browse button
         self.browse_button = ttk.Button(self.config_frame, text='Browse', command=self.grab_folder_path)
@@ -79,11 +80,22 @@ class App:
         self.codec.set('m4a')
         self.codec_select_box.state(["readonly"])
 
+        # Seperator between codec and numbering
+        ttk.Separator(self.config_frame, orient=VERTICAL).grid(column=3, row=self.CONFIG_ROW + 1, sticky=(N,S,W,E), padx=5)
+
         # Keep video box
         self.keep_video_box = ttk.Checkbutton(self.config_frame, text='Keep Video', variable=self.extra_options,
 	    onvalue='-k', offvalue='')
-        self.keep_video_box.grid(column=3, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
+        self.keep_video_box.grid(column=4, row=self.CONFIG_ROW + 1, sticky=(N,S,E), padx=5, pady=5)
         self.extra_options.set('')
+
+        # Numbering outputs
+        self.numbering_checkbox = ttk.Checkbutton(self.config_frame, text='Enable Numbering', command=self.toggle_numbering)
+        self.numbering_checkbox.grid(column=1, row=self.CONFIG_ROW + 2, padx=5, pady=5)
+        self.number_select = ttk.Spinbox(self.config_frame, from_=1.0, to=100.0, textvariable=self.file_numbering)
+        self.number_select.grid(column=2, row=self.CONFIG_ROW + 2)
+        self.number_select['state'] = 'disabled'
+        # THIS DOES NOTHING YET
 
 
     def init_status_area(self):
@@ -150,6 +162,11 @@ class App:
         if filename != '':
             self.folder_path.set(filename)
 
+    
+    def toggle_numbering(self, *args):
+        if self.number_select:
+            pass
+            # THIS DOES NOTHING
 
 if __name__ == '__main__':
     input('You should run "main.py" instead!')
