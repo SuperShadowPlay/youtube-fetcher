@@ -29,11 +29,18 @@ class App:
         self.PBAR_ROW = self.CONFIG_ROW + 1
 
         # Init everything else
+        self.init_style()
         self.init_frames()
         self.init_entry()
         self.init_config()
         self.init_status_area()
         self.bind_events()
+
+
+    def init_style(self):
+        '''Thank you to rbende for the great premade theme! Source repo in README.md'''
+        self.root.call('source', 'forest-dark.tcl')
+        ttk.Style().theme_use('forest-dark')
 
 
     def init_frames(self):

@@ -1,4 +1,3 @@
-from ast import Import
 from app import App
 try:
     from tkinter import Tk
