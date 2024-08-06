@@ -1,5 +1,5 @@
 from ast import Import
-from app import App
+from src.app import App
 try:
     from tkinter import Tk
 except ImportError:

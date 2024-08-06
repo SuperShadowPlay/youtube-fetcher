@@ -1,4 +1,4 @@
-from fetch import fetch
+from src.fetch import fetch
 import os
 try:
     from tkinter import *
@@ -76,7 +76,7 @@ class App:
         self.codec_select_box = ttk.Combobox(self.config_frame, textvariable=self.codec)
         self.codec_select_box.grid(column=2, row=self.CONFIG_ROW + 1, sticky=(N,S,W), padx=5, pady=5)
         self.codec_select_box['values'] = ('best', 'aac', 'flac', 'mp3', 'm4a', 'opus', 'vorbis', 'wav')
-        self.codec.set('m4a')
+        self.codec.set('mp3')
         self.codec_select_box.state(["readonly"])
 
         # Keep video box

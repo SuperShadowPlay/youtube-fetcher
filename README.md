@@ -3,10 +3,13 @@
 I find myself grabbing mp3s off of youtube a lot, so I made a small
 app that makes the process a bit easier on myself.
 This program is essentially just a `yt-dlp` GUI specialized for how I use `yt-dlp`.
+It's a simple script, but it's honest code.
 
 Is it janky? Yes!
 
 Does it work? Mostly!
+
+![App Screenshot](./src/App_Screenshot.png)
 
 # How to run
 
@@ -28,3 +31,4 @@ If you need to install yt-dlp and are scared of a command prompt, simply run the
 - [ ] More intuitive way to enter URLs
 - [ ] Give the app a nice theme
 - [ ] Make config choices persistent over multiple sessions
+- [ ] Organize files for distribution on pypi
